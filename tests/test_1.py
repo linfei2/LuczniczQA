@@ -1,6 +1,5 @@
 import pytest
 import requests
-
 from assertpy import assert_that, soft_assertions
 
 
@@ -9,10 +8,8 @@ class TestAnyEndpoint:
     def test_01_get_root_response_200(self):
         response = requests.get(
             "http://127.0.0.1:8080/",
-            headers={
-                "accept": "application/json",
-                "Content-type": "application/json"
-            })
+            headers={"accept": "application/json", "Content-type": "application/json"},
+        )
 
         with soft_assertions():
             print("assert 1")
