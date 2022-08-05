@@ -2,12 +2,14 @@ import pytest
 import requests
 from assertpy import assert_that, soft_assertions
 
+import config
+
 
 @pytest.mark.university
 class TestUniversity:
     def test_01_get_list_of_universities(self, headers):
         uni_list = requests.get(
-            "http://127.0.0.1:8080/university/",
+            config.BASE_URL + "/university/",
             headers=headers,
         )
 
@@ -17,7 +19,7 @@ class TestUniversity:
     def test_02_get_university(self, headers, post_university):
         uni_id = post_university[0]
         response = requests.get(
-            f"http://127.0.0.1:8080/university/{uni_id}", headers=headers
+            config.BASE_URL + f"/university/{uni_id}", headers=headers
         )
 
         with soft_assertions():
@@ -32,7 +34,7 @@ class TestUniversity:
     def test_03_delete_university(self, headers, delete_university):
         uni_id = delete_university[0]
         get_deleted_uni = requests.get(
-            f"http://127.0.0.1:8080/university/{uni_id}",
+            config.BASE_URL + f"/university/{uni_id}",
             headers=headers,
         )
         with soft_assertions():
@@ -43,7 +45,7 @@ class TestUniversity:
         uni_id = update_university[0]
         update_response = update_university[1]
         get_updated_uni = requests.get(
-            f"http://127.0.0.1:8080/university/{uni_id}", headers=headers
+            config.BASE_URL + f"/university/{uni_id}", headers=headers
         )
 
         with soft_assertions():

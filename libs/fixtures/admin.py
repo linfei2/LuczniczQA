@@ -2,14 +2,16 @@ import pytest
 import requests
 from assertpy import assert_that
 
+import config
+
 
 @pytest.fixture
 def generate_token():
-    headers = {"accept": "application/json", "Content-Type": "application/json"}
-    body = {"username": "dmatczynska@example.com", "password": "super_secret_password"}
+    headers = config.BASE_HEADERS
+    body = {"username": config.USER_NAME, "password": config.PASSWORD}
 
     response = requests.post(
-        "http://127.0.0.1:8080/admin/login", headers=headers, json=body
+        config.BASE_URL + "/admin/login", headers=headers, json=body
     )
     assert_that(response.status_code).is_equal_to(200)
     return response.json()["data"][0]["access_token"]

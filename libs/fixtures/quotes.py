@@ -2,12 +2,14 @@ import pytest
 import requests
 from assertpy import assert_that
 
+import config
+
 
 @pytest.fixture
 def create_and_delete_quote():
     quote = requests.post(
-        "http://127.0.0.1:8080/quote/",
-        headers={"accept": "application/json", "Content-Type": "application/json"},
+        config.BASE_URL + "/quote/",
+        headers=config.BASE_HEADERS,
         json={"quote": "Tekst cytatu", "author": "Autor cytatu"},
     )
 
@@ -16,9 +18,6 @@ def create_and_delete_quote():
     quote_data = quote.json()
     yield quote_id, quote_data
     delete_quote = requests.delete(
-        f"http://127.0.0.1:8080/quote/{quote_id}",
-        headers={
-            "accept": "application/json",
-        },
+        config.BASE_URL + f"/quote/{quote_id}", headers=config.BASE_HEADERS
     )
     assert_that(delete_quote.status_code).is_equal_to(200)
