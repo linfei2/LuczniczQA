@@ -8,11 +8,10 @@ from assertpy import assert_that, soft_assertions
 @pytest.mark.quote
 @pytest.mark.usefixtures("create_and_delete_quote")
 class TestQuotes:
+    headers = {"accept": "application/json", "Content-Type": "application/json"}
+
     def test_01_get_quotes(self):
-        response = requests.get(
-            "http://127.0.0.1:8080/quote/",
-            headers={"accept": "application/json", "Content-Type": "application/json"},
-        )
+        response = requests.get("http://127.0.0.1:8080/quote/", headers=self.headers)
 
         with soft_assertions():
             assert_that(response.status_code).is_equal_to(200)
@@ -30,7 +29,7 @@ class TestQuotes:
         quote_id = create_and_delete_quote[0]
         update_quote = requests.put(
             f"http://127.0.0.1:8080/quote/{quote_id}",
-            headers={"accept": "application/json"},
+            headers=self.headers,
             json={"quote": "Tekst innego cytatu", "author": "Inny autor"},
         )
         with soft_assertions():
@@ -39,7 +38,7 @@ class TestQuotes:
 
         get_quote = requests.get(
             f"http://127.0.0.1:8080/quote/{quote_id}",
-            headers={"accept": "application/json"},
+            headers=self.headers,
         )
         with soft_assertions():
             assert_that(get_quote.status_code).is_equal_to(200)

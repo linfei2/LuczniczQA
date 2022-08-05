@@ -5,26 +5,19 @@ from assertpy import assert_that, soft_assertions
 
 @pytest.mark.university
 class TestUniversity:
-    def test_01_get_list_of_universities(self, generate_token):
+    def test_01_get_list_of_universities(self, headers):
         uni_list = requests.get(
             "http://127.0.0.1:8080/university/",
-            headers={
-                "accept": "application / json",
-                "Authorization": f"Bearer {generate_token}",
-            },
+            headers=headers,
         )
 
         with soft_assertions():
             assert_that(uni_list.status_code).is_equal_to(200)
 
-    def test_02_get_university(self, generate_token, post_university):
+    def test_02_get_university(self, headers, post_university):
         uni_id = post_university[0]
         response = requests.get(
-            f"http://127.0.0.1:8080/university/{uni_id}",
-            headers={
-                "accept": "application / json",
-                "Authorization": f"Bearer {generate_token}",
-            },
+            f"http://127.0.0.1:8080/university/{uni_id}", headers=headers
         )
 
         with soft_assertions():
@@ -36,14 +29,25 @@ class TestUniversity:
                 "id", "name", "city", "timezone", "current_time"
             )
 
-    def test_03_delete_university(self, generate_token, delete_university):
+    def test_03_delete_university(self, headers, delete_university):
+        uni_id = delete_university[0]
         get_deleted_uni = requests.get(
-            f"http://127.0.0.1:8080/university/{delete_university[0]}",
-            headers={
-                "accept": "application / json",
-                "Authorization": f"Bearer {generate_token}",
-            },
+            f"http://127.0.0.1:8080/university/{uni_id}",
+            headers=headers,
         )
         with soft_assertions():
             assert_that(delete_university[1].status_code).is_equal_to(200)
             assert_that(get_deleted_uni.status_code).is_equal_to(404)
+
+    def test_04_update_university(self, update_university, headers):
+        uni_id = update_university[0]
+        update_response = update_university[1]
+        get_updated_uni = requests.get(
+            f"http://127.0.0.1:8080/university/{uni_id}", headers=headers
+        )
+
+        with soft_assertions():
+            assert_that(update_response.status_code).is_equal_to(200)
+            assert_that(get_updated_uni.json()["data"][0]["name"]).is_equal_to(
+                "Updated name"
+            )

@@ -18,13 +18,24 @@ def post_university(generate_token, university_data):
 
 
 @pytest.fixture
-def delete_university(generate_token, post_university):
+def delete_university(headers, post_university):
     university_id = post_university[0]
     delete_response = requests.delete(
         f"http://127.0.0.1:8080/university/{university_id}",
-        headers={
-            "accept": "application / json",
-            "Authorization": f"Bearer {generate_token}",
-        },
+        headers=headers,
     )
     yield university_id, delete_response
+
+
+@pytest.fixture
+def update_university(headers, post_university):
+    university_id = post_university[0]
+    body = post_university[1]
+    body["name"] = "Updated name"
+    update_response = requests.put(
+        f"http://127.0.0.1:8080/university/{university_id}", headers=headers, json=body
+    )
+    yield university_id, update_response
+    requests.delete(
+        f"http://127.0.0.1:8080/university/{university_id}", headers=headers
+    )
